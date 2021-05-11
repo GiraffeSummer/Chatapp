@@ -8,7 +8,7 @@ const cors = require('cors');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const passport = require("passport");
-const GitHubStrategy = require("passport-github2").Strategy;
+
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 const { Modifier: textMod, Convert: TextConvert } = require('./util/textConvert');
@@ -21,13 +21,11 @@ const users = db.get('users');
 const messages = db.get('messages');
 
 const BaseDomain = "https://chatapp.loca.lt"//`https://localhost${(PORT) ? ":" + PORT : ".com"}`;
-
+module.exports.BaseDomain = BaseDomain;
 //TODO: Normal login with login page
 
 
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-const GITHUB_CALLBACK_URL = BaseDomain + `/auth/github/callback` // or get from process.env.GITHUB_CALLBACK_URL
+
 
 function ensureAuthenticated(req, res, next) {
     const Authorized = req.isAuthenticated();
@@ -45,30 +43,7 @@ passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
-passport.use(
-    new GitHubStrategy(
-        {
-            clientID: GITHUB_CLIENT_ID,
-            clientSecret: GITHUB_CLIENT_SECRET,
-            callbackURL: GITHUB_CALLBACK_URL
-        },
-        async (accessToken, refreshToken, profile, done) => {
-            // asynchronous verification, for effect...
-            process.nextTick(async function () {
-                let User = await users.findOne({ id: profile.id })
-
-                if (!User) {
-                    User = await users.insert({ username: profile.username, modifier: textMod.owo, id: profile.id, color: RandomColor() })
-                } else console.log(User);
-
-                users.findOneAndUpdate({ id: profile.id }, { $set: { access_token: accessToken, refreshToken: refreshToken } })
-                    .then((User) => {
-                        done(null, User)
-                    })
-            })
-        }
-    )
-)
+passport.use(require("./passport/githubStrategy"));
 
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
