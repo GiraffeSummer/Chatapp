@@ -10,6 +10,7 @@ then enter `npm i` and `npm start`
 
 Implemented features:
 - owoified messages
+- leetspeak messages
 - chat colour
 - webhooks
 
