@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+
+    <title>
+        <%= data.window.title %>
+    </title>
+
+</head>
+
+<body>
+    <script src="./scripts/main.js"></script>
+    <p>Start of chat.</p>
+    <input type="hidden" id="userInfo" value="<%= JSON.stringify(data.user)%>"></input>
+    <!--<ul id="messages"></ul>-->
+    <table id="messages">
+        <% data.chat.messages.forEach(msg=> { console.log(msg);%>
+            <%- include('message', {msg});%>
+                <% }); %>
+    </table>
+    <div class="form">
+        <input id="m" autocomplete="off" /><button id="SendBtn">Send</button>
+    </div>
+</body>
+
+</html>
