@@ -30,19 +30,19 @@ body {
     padding: 10px;
 }
 
-#messages {
+#messages  {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-#messages tr {
+#messages tr .message {
     padding: 5px 10px;
 }
 
 #messages tr:nth-child(odd) {
     background: #eee;
 }
-.msgContent{
+.msgContent {
     width: 100%;
 }

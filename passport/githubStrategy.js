@@ -3,8 +3,10 @@ const { BaseDomain } = require("../index.js");
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-const GITHUB_CALLBACK_URL = BaseDomain + `/auth/github/callback` // or get from process.env.GITHUB_CALLBACK_URL
-const { db,  RandomColor } = require('../util/Chat');
+const GITHUB_CALLBACK_URL = BaseDomain + `/auth/github/callback`; // or get from process.env.GITHUB_CALLBACK_URL
+const { db, RandomColor } = require('../util/Chat');
+const { Modifier: textMod } = require('../util/textConvert');
+
 const users = db.get('users');
 
 const GithubStrat = new GitHubStrategy(

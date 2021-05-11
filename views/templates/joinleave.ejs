@@ -1,8 +1,6 @@
-<tr>
-    <td style="color: <%= msg.user.color %>">
-        <%= msg.user.username %>:
-    </td>
-    <td class="msgContent">
-        <%-(joined) ? "Joined" : "Left"%>.
+<tr class="console">
+    <td></td>
+    <td style="color: <%= user.color %>">
+        <%= user.username %> - <%-(joined) ? "Joined" : "Left" %>.
     </td>
 </tr>

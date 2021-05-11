@@ -14,7 +14,6 @@ const Chat = {
     Init: function (msgs, urs) {
         this.messages = msgs;
         this.users = urs;
-        console.log(urs)
     },
 
     addUser: function (id, user) {

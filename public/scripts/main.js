@@ -58,6 +58,11 @@ function CreateMessage(msg) {
 socket.on('chat message', function (msg) {
     CreateMessage(msg);
 });
+socket.on('console message', function (msg) {
+    if(["join",'leave'].includes(msg.event)){
+        messagesBox.innerHTML += msg.html;
+    }
+});
 socket.on('err', function (msg) {
     alert(msg.reason);
 });

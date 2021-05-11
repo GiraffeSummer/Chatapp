@@ -94,11 +94,12 @@ app.get("/auth/github/callback", passport.authenticate("github", { failureRedire
 
 io.on('connection', (socket) => {
     let conId = socket.conn.id;
-    socket.on('init', (user) => {
+    socket.on('init', async (user) => {
         console.log("Connected: ", user.username)
         console.log(user)
         Chat.addUser(conId, user);
-        io.emit('console message', { success: true, event: "Join", user });
+        const html = await ejs.renderFile("./views/templates/joinleave.ejs", { joined: true, user });
+        io.emit('console message', { success: true, event: "join", user, html });
     });
     socket.on('chat message', async (msg) => {
         /*if (!io.sockets.clients.includes(conId)) //check if still connected with valid id
@@ -113,16 +114,19 @@ io.on('connection', (socket) => {
         if (/*userMessages.length <= 0 || userMessages[userMessages.length - 1].time + 1000 < Date.now()*/true) {
             let sndMsg = await Chat.addMessage(msg, user.id)
             console.log(`${user.username}: ` + sndMsg.text);
-            const html = await ejs.renderFile("./views/templates/message.ejs",{msg:sndMsg})
-            io.emit('chat message', { success: true, msg: sndMsg,html, user });
+            const html = await ejs.renderFile("./views/templates/message.ejs", { msg: sndMsg })
+            io.emit('chat message', { success: true, msg: sndMsg, html, user });
         } else io.to(conId).emit('err', { success: false, reason: "Ratelimit: Calm it" });
 
     });
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         try {
             let user = Chat.getUser(conId);
             console.log(`${user.username} left`);
-            io.emit('console message', { success: true, event: "leave", user });
+
+            const html = await ejs.renderFile("./views/templates/joinleave.ejs", { joined: false, user });
+
+            io.emit('console message', { success: true, event: "leave", user, html });
         } catch (error) {
         }
     });
