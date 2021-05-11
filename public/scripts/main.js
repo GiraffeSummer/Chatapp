@@ -26,7 +26,6 @@ window.onload = () => {
         document.querySelector("#SendBtn").click();
         event.preventDefault();
     });
-
 }
 
 
@@ -39,7 +38,7 @@ function SendMsg() {
 }
 
 function CreateMessage(msg) {
-    let newMsg = document.createElement('tr');
+  /*  let newMsg = document.createElement('tr');
     let userBox = document.createElement('td');
     let msgContent = document.createElement('td');
     //let timeBox = document.createElement('td');
@@ -51,7 +50,9 @@ function CreateMessage(msg) {
     newMsg.appendChild(msgContent);
     //timeBox.textContent = new Date(msg.time * 1000).toString()
     //messagesBox.appendChild(timeBox);
-    messagesBox.appendChild(newMsg);
+    messagesBox.appendChild(newMsg);*/
+   // console.log(msg)
+    messagesBox.innerHTML +=msg.html;
 }
 
 socket.on('chat message', function (msg) {

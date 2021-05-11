@@ -8,6 +8,8 @@ const cors = require('cors');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const passport = require("passport");
+//const templates = require('./util/templateLoader'); //for parsing the templates, not required anymore
+const ejs = require('ejs');
 
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
@@ -20,12 +22,12 @@ const PORT = 3000;
 const users = db.get('users');
 const messages = db.get('messages');
 
-const BaseDomain = "https://chatapp.loca.lt"//`https://localhost${(PORT) ? ":" + PORT : ".com"}`;
-module.exports.BaseDomain = BaseDomain;
+
 //TODO: Normal login with login page
 
-
-
+const APPNAME = "terrible-chatapp"
+const BaseDomain = "https://" + APPNAME + ".loca.lt"//`https://localhost${(PORT) ? ":" + PORT : ".com"}`;
+module.exports.BaseDomain = BaseDomain;
 
 function ensureAuthenticated(req, res, next) {
     const Authorized = req.isAuthenticated();
@@ -111,7 +113,8 @@ io.on('connection', (socket) => {
         if (/*userMessages.length <= 0 || userMessages[userMessages.length - 1].time + 1000 < Date.now()*/true) {
             let sndMsg = await Chat.addMessage(msg, user.id)
             console.log(`${user.username}: ` + sndMsg.text);
-            io.emit('chat message', { success: true, msg: sndMsg, user });
+            const html = await ejs.renderFile("./views/templates/message.ejs",{msg:sndMsg})
+            io.emit('chat message', { success: true, msg: sndMsg,html, user });
         } else io.to(conId).emit('err', { success: false, reason: "Ratelimit: Calm it" });
 
     });
@@ -133,7 +136,7 @@ http.listen(PORT, async () => {
     //automatically tunnel to test domain
     if (DEVELOPMENT) {
         const localtunnel = require('localtunnel');
-        const tunnel = await localtunnel({ port: 3000, subdomain: "chatapp" });
+        const tunnel = await localtunnel({ port: 3000, subdomain: APPNAME });
 
         console.log(`tunneling to: ${tunnel.url}`);;
     }

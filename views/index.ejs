@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/style.css">
     <script src="/socket.io/socket.io.js"></script>
+   <!--Ejs would refuse to work on the client side-->
 
     <title>
         <%= data.window.title %>
@@ -20,7 +21,7 @@
     <!--<ul id="messages"></ul>-->
     <table id="messages">
         <% data.chat.messages.forEach(msg=> { console.log(msg);%>
-            <%- include('message', {msg});%>
+            <%- include('templates/message', {msg});%>
                 <% }); %>
     </table>
     <div class="form">
