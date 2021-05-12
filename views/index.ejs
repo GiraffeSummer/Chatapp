@@ -1,41 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles/style.css">
-    <script src="/socket.io/socket.io.js"></script>
-    <!--Ejs would refuse to work on the client side-->
+<%- include('head', {data});%>
 
-    <title>
-        <%= data.window.title %>
-    </title>
+    <head>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
 
-</head>
-
-<body>
-    <script src="./scripts/main.js"></script>
-    <input type="hidden" id="userInfo" value="<%= JSON.stringify(data.user)%>"></input>
-    <!--<ul id="messages"></ul>-->
-    <div class="container">
-        <div id="messages">
-            <%if(data.chat.messages.length==0){%>
-                <%- include('templates/message', {msg:{text:"Chat is empty",user:{color:'#FF0000', name: "ALERT" }}});%>
-                    <%}%>
-                        <% data.chat.messages.forEach(msg=> { %>
-                            <%- include('templates/message', {msg});%>
-                                <% }); %>
+    <body>
+        <script src="./scripts/main.js"></script>
+        <input type="hidden" id="userInfo" value="<%= JSON.stringify(data.user)%>"></input>
+        <!--<ul id="messages"></ul>-->
+        <div class="container">
+            <div id="messages">
+                <%if(data.chat.messages.length==0){%>
+                    <%- include('templates/message', {msg:{text:"Chat is empty",user:{color:'#FF0000', name: "ALERT"
+                        }}});%>
+                        <%}%>
+                            <% data.chat.messages.forEach(msg=> { %>
+                                <%- include('templates/message', {msg});%>
+                                    <% }); %>
+            </div>
+            <div id="users">
+                <% data.chat.users.forEach(user=> { %>
+                    <%- include('templates/user', {user});%>
+                        <% }); %>
+            </div>
         </div>
-        <div id="users">
-            <% data.chat.users.forEach(user=> { %>
-                <%- include('templates/user', {user});%>
-                    <% }); %>
+        <div class="form">
+            <input id="m" autocomplete="off" /><button id="SendBtn">Send</button>
         </div>
-    </div>
-    <div class="form">
-        <input id="m" autocomplete="off" /><button id="SendBtn">Send</button>
-    </div>
-</body>
+    </body>
 
 </html>

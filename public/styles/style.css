@@ -133,3 +133,23 @@ body {
 .hiddenField {
     display: none;
 }
+
+a.button:link,
+a.button:visited {
+    background-color: var(--darkdetail);
+    color: var(--darker);
+    padding: 9px;
+    padding-right: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+a.button:hover {
+    transition: border-radius 0.2s linear;
+    border-radius: 4px;
+    background-color: var(--darkdetail);
+    cursor: pointer;
+}

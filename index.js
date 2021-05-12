@@ -75,7 +75,7 @@ app.get('/', ensureAuthenticated, (req, res) => {
 })
 
 app.get('/chat', ensureAuthenticated, (req, res) => {
-    res.render('index', { data: { window: { title: "Chat app" }, user: req.user, chat: Chat } });
+    res.render('index', { data: { window: { title: APPNAME }, user: req.user, chat: Chat } });
 })
 
 
@@ -108,7 +108,7 @@ app.put('/modifier', ensureAuthenticated, async (req, res) => {
 
 
 app.get("/login", (req, res) => {
-    res.send("<a href='/auth/github'>Sign in With GitHub</a>")
+    res.render("login",{data: {window: {title: APPNAME}}})
 })
 
 
