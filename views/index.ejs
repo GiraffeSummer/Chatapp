@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/style.css">
     <script src="/socket.io/socket.io.js"></script>
-   <!--Ejs would refuse to work on the client side-->
+    <!--Ejs would refuse to work on the client side-->
 
     <title>
         <%= data.window.title %>
@@ -16,14 +16,23 @@
 
 <body>
     <script src="./scripts/main.js"></script>
-    <p>Start of chat.</p>
     <input type="hidden" id="userInfo" value="<%= JSON.stringify(data.user)%>"></input>
     <!--<ul id="messages"></ul>-->
-    <table id="messages">
-        <% data.chat.messages.forEach(msg=> { console.log(msg);%>
-            <%- include('templates/message', {msg});%>
-                <% }); %>
-    </table>
+    <div class="container">
+        <div id="messages">
+            <%if(data.chat.messages.length==0){%>
+                <%- include('templates/message', {msg:{text:"Chat is empty",user:{color:'#FF0000', name: "ALERT" }}});%>
+                    <%}%>
+                        <% data.chat.messages.forEach(msg=> { %>
+                            <%- include('templates/message', {msg});%>
+                                <% }); %>
+        </div>
+        <div id="users">
+            <% data.chat.users.forEach(user=> { %>
+                <%- include('templates/user', {user});%>
+                    <% }); %>
+        </div>
+    </div>
     <div class="form">
         <input id="m" autocomplete="off" /><button id="SendBtn">Send</button>
     </div>

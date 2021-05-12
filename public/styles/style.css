@@ -1,11 +1,27 @@
+:root {
+    --detail: #eeaeca;
+    --darkdetail: rgb(130, 224, 255);
+    --dark: #2C2F33;
+    --darker: #23272A;
+    --text: #d4d5d6;
+    --alert: #cc0000;
+}
+
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
+
+h2 {
+    margin: 10px 0px;
+}
+
+/* Add a gray background color with some padding */
 body {
-    font: 13px Helvetica, Arial;
+    font-family: Arial;
+
+    background: var(--darker);
+    color: var(--text);
 }
 
 .form {
@@ -14,6 +30,7 @@ body {
     position: fixed;
     bottom: 0;
     width: 100%;
+    margin: 5px;
 }
 
 .form input {
@@ -25,24 +42,94 @@ body {
 
 .form button {
     width: 9%;
-    background: rgb(130, 224, 255);
+    background: var(--darkdetail);
     border: none;
     padding: 10px;
 }
 
-#messages  {
+.container {
+    padding-left: 15px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+#users {
+    float: right;
+    width: 25%;
+    padding-left: 20px;
+    font-size: 12px;
+    margin: 0;
+}
+
+#messages {
+    margin-left: 0;
+    float: left;
+    width: 75%;
     list-style-type: none;
     margin: 0;
     padding: 0;
+    padding-bottom: 30px;
 }
 
-#messages tr .message {
-    padding: 5px 10px;
-}
-
-#messages tr:nth-child(odd) {
-    background: #eee;
-}
 .msgContent {
     width: 100%;
+}
+
+/* Add a card effect for articles */
+.card {
+    background-color: var(--dark);
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 10px;
+}
+
+.card p {
+    /* white-space: pre-line;*/
+    font-size: 13px;
+    margin: 0px;
+}
+
+.card h5 {
+    margin: 0;
+    font-weight: bolder;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.alert h5 {
+    display: none;
+}
+
+.alert p {
+    font-weight: bold;
+    font-size: 14;
+    color: var(--alert);
+}
+
+.hiddenMenu {
+    display: none;
+
+    background-color: var(--dark);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-content a {
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: var(--detail);
+    cursor: pointer;
+    color: var(--darker);
+}
+
+.hiddenMenu:hover .dropdown-content {
+    border-radius: 10px;
+    display: block;
+}
+
+.hiddenField {
+    display: none;
 }

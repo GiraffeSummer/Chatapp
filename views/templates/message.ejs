@@ -1,8 +1,16 @@
-<tr class="message">
-    <td style="color: <%= msg.user.color %>">
-        <%= msg.user.username %>:
-    </td>
-    <td class="msgContent">
+<div class="card<% if (msg.alert) {%> alert<%}%>">
+    <div class="hiddenMenu">
+        <div class="dropdown-content">
+            <a>Menu goes here</a>
+        </div>
+
+    </div>
+    <h5 style="color: <%= msg.user.color %>">
+        <%= msg.user.username %>
+    </h5>
+
+    <p max-height="50px" class="msgContent">
         <%= msg.text %>
-    </td>
-</tr>
+    </p>
+
+</div>
