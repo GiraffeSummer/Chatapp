@@ -24,7 +24,7 @@ const messages = db.get('messages');
 
 //TODO: Normal login with login page
 
-const APPNAME = "cursed-chatapp"
+const APPNAME = process.env.APPNAME;
 const BaseDomain = "https://" + APPNAME + ".loca.lt";
 
 function ensureAuthenticated(req, res, next) {
