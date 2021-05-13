@@ -1,5 +1,5 @@
 const { db, Chat, OnlineStatus, GetOnlineUsers } = require('../util/Chat');
-const sessionManager = require("../util/sessionManager")
+const sessionManager = require("../util/sessionManager");
 const { UserHTML } = require('../util/templateLoader');
 const { io, APPNAME } = require("../index.js");
 const ejs = require('ejs');
@@ -45,9 +45,11 @@ function SocketHandler(socket) {
             const users_html = await UserHTML(await GetOnlineUsers(), conId);
             io.emit('console message', { success: true, event: "leave", user, users_html });
 
-            sessionManager.DeleteSession(socket.request.session).then(async (timer) => {
-                await Chat.ChangeUserStatus(socket.request.session.passport.user.id, OnlineStatus.Offline);
-                Chat.destroyUser(conId);
+            sessionManager.DeleteSession(socket.request.session).then(async (removed, id) => {
+                if (removed) {
+                    await Chat.ChangeUserStatus(id, OnlineStatus.Offline);
+                    Chat.destroyUser(conId);
+                }
             });
         } catch (error) {
         }

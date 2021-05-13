@@ -20,7 +20,7 @@ module.exports.GetOnlineUsers = () => {
 
 //Generates new user object
 function CreateUserObj(profile) {
-    return { id: profile.id, username: profile.username, modifier: RandomModifier(), status: OnlineStatus.Offline, color: RandomColor() }
+    return { id: profile.id, username: profile.username,provider: profile.provider, modifier: RandomModifier(), status: OnlineStatus.Offline, color: RandomColor() }
 }
 module.exports.CreateUserObj = CreateUserObj;
 
@@ -36,6 +36,7 @@ const Chat = {
     ChangeUserStatus: function (id, status) {
         return new Promise(async (resolve, reject) => {
             const updated = await users.findOneAndUpdate({ id: id }, { $set: { status: status } });
+            //console.log(`${updated.username} went: ${Object.keys(OnlineStatus).find(k => OnlineStatus[k] === updated.status)}`);
             resolve(updated)
         })
     },

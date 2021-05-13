@@ -1,6 +1,6 @@
-const OWO = require("./owoify");
-const LEET = require("./leetify");
-const RANDOMCAPS = require("./randCapify");
+const OWO = require("./modifier/owoify");
+const LEET = require("./modifier/leetify");
+const RANDOMCAPS = require("./modifier/randCapify");
 
 const Modifier = Object.freeze({ none: "none", leet: "leet", owo: "owo", randomcaps: "randomcaps" })
 

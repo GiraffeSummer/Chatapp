@@ -1,8 +1,7 @@
 const DiscordStrategy = require('passport-discord').Strategy;
 const { BaseDomain } = require("../index.js");
 
-const { db, RandomColor, CreateUserObj } = require('../util/Chat');
-const { Modifier, RandomModifier } = require('../util/textConvert');
+const { db, CreateUserObj } = require('../util/Chat');
 
 const users = db.get('users');
 
@@ -10,9 +9,9 @@ const CALLBACK_URL = BaseDomain + `/auth/discord/callback`;
 
 module.exports = new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT,
-    clientSecret: process.env.DISCORD_Secret,
+    clientSecret: process.env.DISCORD_SECRET,
     callbackURL: CALLBACK_URL,
-    scope: ['identify', 'email', 'guilds', 'guilds.join']
+    scope: ['identify', 'email'/*, 'guilds', 'guilds.join'*/]
 },
     async (accessToken, refreshToken, profile, done) => {
         // asynchronous verification, for effect...
@@ -20,6 +19,7 @@ module.exports = new DiscordStrategy({
             let User = await users.findOne({ id: profile.id })
 
             if (!User) {
+                profile.username = profile.username + "#" + profile.discriminator;
                 User = await users.insert(CreateUserObj(profile))
             } else console.log(User);
 

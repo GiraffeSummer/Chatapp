@@ -54,8 +54,11 @@ body {
 }
 
 #users {
-    float: right;
-    width: 25%;
+    /* float: right;*/
+    position: fixed;
+    left: 75%;
+    top: 10px;
+    width: 23%;
     padding-left: 20px;
     font-size: 12px;
     margin: 0;

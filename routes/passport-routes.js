@@ -1,10 +1,21 @@
 const express = require('express');
 const Router = express.Router();
 
-
+const { Chat, OnlineStatus } = require('../util/Chat');
 const { ensureAuthenticated, passport } = require("../index.js");
 module.exports = Router;
 
+Router.get('/logout', async function (req, res) {
+    try {
+        await Chat.ChangeUserStatus(req.user.id, OnlineStatus.Offline);
+        Chat.destroyUser(req.user.id);
+        req.session.destroy();
+        req.logout();
+    } catch (error) { }
+    finally {
+        res.redirect('/');
+    }
+});
 
 Router.get('/auth/discord', passport.authenticate('discord'),
     function (req, res) { }
