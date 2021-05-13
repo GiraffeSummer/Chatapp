@@ -9,7 +9,7 @@ function SocketHandler(socket) {
     socket.on('init', async (user) => {
         console.log("Connected: ", user.username)
         Chat.addUser(conId, user);
-        socket.request.session.passport.user = await Chat.ChangeUserStatus(user.id, OnlineStatus.Online);
+        await Chat.ChangeUserStatus(user.id, OnlineStatus.Online);
         sessionManager.CancelDestroySession(socket.request.session);
         //let msg = await Chat.addAlert(`${user.username} Joined`, conId);
         // const html = await ejs.renderFile("./views/templates/message.ejs", { joined: true, user, msg });
