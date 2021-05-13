@@ -1,5 +1,6 @@
 require('dotenv').config();
 const DEVELOPMENT = process.env.NODE_ENV != 'production';
+const ALLLOGIN = (process.env.LOGINS) ? process.env.LOGINS.toLowerCase() != 'single' : true
 const helmet = require("helmet");
 const express = require('express');
 const session = require('express-session');
@@ -46,9 +47,11 @@ passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
-passport.use(require("./passport/githubStrategy"));
 passport.use(require("./passport/discordStrategy"));
-passport.use(require("./passport/googleStrategy"));
+if(ALLLOGIN){
+    passport.use(require("./passport/githubStrategy"));
+    passport.use(require("./passport/googleStrategy"));
+}
 
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
