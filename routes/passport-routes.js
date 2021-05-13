@@ -17,6 +17,16 @@ Router.get('/logout', async function (req, res) {
     }
 });
 
+Router.get('/auth/google',
+    passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
+
+
+Router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
+        res.redirect('/chat');
+    }
+);
+
 Router.get('/auth/discord', passport.authenticate('discord'),
     function (req, res) { }
 );

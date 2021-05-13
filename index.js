@@ -48,6 +48,7 @@ passport.deserializeUser(function (obj, done) {
 
 passport.use(require("./passport/githubStrategy"));
 passport.use(require("./passport/discordStrategy"));
+passport.use(require("./passport/googleStrategy"));
 
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);

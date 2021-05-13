@@ -3,7 +3,7 @@ const ejs = require('ejs');
 
 function UserHTML(users, id) {
     return new Promise(async (resolve, reject) => {
-        //: users.map(x => x.id !== id)
+        users = users.filter(x => x.id !== id);
         resolve(await ejs.renderFile("./views/templates/users.ejs", { users }));
     })
 }
