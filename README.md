@@ -23,6 +23,7 @@ few features I'd like to add (PR also welcome)
  - changing modifier (if you have permissions	)
  - changing colour of username (optionally with permissions)
  - possible login without github
+ - "... is typing" text with webhook
 
 Changes I want to make:
  - better visuals
