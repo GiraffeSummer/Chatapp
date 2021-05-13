@@ -8,17 +8,11 @@ const cors = require('cors');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const passport = require("passport");
-const sessionManager = require("./util/sessionManager")
-const { UserHTML } = require('./util/templateLoader'); //for parsing the templates, not required anymore
-const ejs = require('ejs');
 
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
-
-
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
-const { Modifier: textMod, Convert: TextConvert, ValidateModifier } = require('./util/textConvert');
 
 
 const { db, Chat, RandomColor, OnlineStatus, GetOnlineUsers } = require('./util/Chat');
@@ -32,7 +26,6 @@ const messages = db.get('messages');
 
 const APPNAME = "cursed-chatapp"
 const BaseDomain = "https://" + APPNAME + ".loca.lt";
-module.exports.BaseDomain = BaseDomain;
 
 function ensureAuthenticated(req, res, next) {
     const Authorized = req.isAuthenticated();
@@ -41,6 +34,11 @@ function ensureAuthenticated(req, res, next) {
     } else
         res.redirect("/login")
 }
+module.exports.BaseDomain = BaseDomain;
+module.exports.ensureAuthenticated = ensureAuthenticated;
+module.exports.APPNAME = APPNAME;
+module.exports.passport = passport;
+module.exports.io = io;
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -51,6 +49,7 @@ passport.deserializeUser(function (obj, done) {
 });
 
 passport.use(require("./passport/githubStrategy"));
+passport.use(require("./passport/discordStrategy"));
 
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
@@ -70,112 +69,11 @@ io.use(wrap(SessionOpts));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', ensureAuthenticated, (req, res) => {
-    res.redirect("/chat")
-})
+app.use(require("./routes/routes"));
+app.use(require("./routes/passport-routes"));
+app.use(require("./routes/update-routes"));
 
-app.get('/chat', ensureAuthenticated, (req, res) => {
-    res.render('index', { data: { window: { title: APPNAME }, user: req.user, chat: Chat } });
-})
-
-
-//update user endpoints
-app.put('/color', ensureAuthenticated, async (req, res) => {
-    const NewColor = req.body.color || RandomColor();
-    const isValid = /^#[0-9A-F]{6}$/i.test(NewColor)
-    if (isValid) {
-        const newUser = await users.findOneAndUpdate({ id: req.user.id }, { $set: { color: NewColor } });
-        req.user = newUser;
-        res.status(200).send({ valid: true, color: NewColor })
-    } else {
-        res.status(200).send({ valid: false, color: NewColor })
-    }
-})
-
-app.put('/modifier', ensureAuthenticated, async (req, res) => {
-    const NewMod = req.body.modifier || RandomModifier();
-    const isValid = ValidateModifier(NewMod);
-    if (isValid) {
-        const newUser = await users.findOneAndUpdate({ id: req.user.id }, { $set: { modifier: NewMod } });
-        req.user = newUser;
-        res.status(200).send({ valid: true, modifier: NewMod })
-    } else {
-        res.status(200).send({ valid: false, modifier: NewMod })
-    }
-})
-
-
-
-
-app.get("/login", (req, res) => {
-    res.render("login",{data: {window: {title: APPNAME}}})
-})
-
-
-app.get("/auth/github",
-    passport.authenticate("github", { scope: ["user:email"] }), /// Note the scope here
-    function (req, res) { }
-)
-
-app.get("/auth/github/callback", passport.authenticate("github", { failureRedirect: "/login" }),
-    (req, res) => {
-        res.redirect("/chat")
-    }
-)
-
-/*app.get("/secret", ensureAuthenticated, (req, res) => {
-    res.send(`<h2>yo ${req.user}</h2>`)
-})*/
-
-io.on('connection', (socket) => {
-    let conId = socket.conn.id;
-    socket.on('init', async (user) => {
-        console.log("Connected: ", user.username)
-        Chat.addUser(conId, user);
-        socket.request.session.passport.user = await Chat.ChangeUserStatus(user.id, OnlineStatus.Online);
-        sessionManager.CancelDestroySession(socket.request.session);
-        //let msg = await Chat.addAlert(`${user.username} Joined`, conId);
-        // const html = await ejs.renderFile("./views/templates/message.ejs", { joined: true, user, msg });
-        const users_html = await UserHTML(await GetOnlineUsers(), conId);
-        io.emit('console message', { success: true, event: "join", user, users_html });
-    });
-    socket.on('chat message', async (msg) => {
-        /*if (!io.sockets.clients.includes(conId)) //check if still connected with valid id
-            socket.socket.connect();*/
-
-        let user = Chat.getUser(conId);
-        if (!user) {
-            console.log("CLOSE")
-            socket.disconnect(true)
-        }
-        if (/*userMessages.length <= 0 || userMessages[userMessages.length - 1].time + 1000 < Date.now()*/true) {
-            let sndMsg = await Chat.addMessage(msg, user.id, user.modifier)
-            console.log(`${user.username}: ` + sndMsg.text);
-            const html = await ejs.renderFile("./views/templates/message.ejs", { msg: sndMsg })
-            io.emit('chat message', { success: true, msg: sndMsg, html, user });
-        } else io.to(conId).emit('err', { success: false, reason: "Ratelimit: Calm it" });
-
-    });
-    socket.on('disconnect', async () => {
-        try {
-            let user = Chat.getUser(conId);
-            console.log(`${user.username} left`);
-            //Chat.addAlert(`${user.username} Left`, user.id);
-
-
-            //let msg = await Chat.addAlert(`${user.username} Joined`, conId);
-            //const html = await ejs.renderFile("./views/templates/message.ejs", { joined: false, user, msg });
-            const users_html = await UserHTML(await GetOnlineUsers(), conId);
-            io.emit('console message', { success: true, event: "leave", user, users_html });
-
-            sessionManager.DeleteSession(socket.request.session).then(async (timer) => {
-                await Chat.ChangeUserStatus(socket.request.session.passport.user.id, OnlineStatus.Offline);
-                Chat.destroyUser(conId);
-            });
-        } catch (error) {
-        }
-    });
-});
+io.on('connection', require("./routes/socket"));
 
 http.listen(PORT, async () => {
     Chat.Init(await messages.find({}), await users.find({}))

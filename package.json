@@ -10,6 +10,7 @@
     "helmet": "^4.5.0",
     "monk": "^7.3.4",
     "passport": "^0.4.1",
+    "passport-discord": "^0.1.4",
     "passport-github2": "^0.1.12",
     "passport-google-oauth": "^2.0.0",
     "socket.io": "^4.0.1"
