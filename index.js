@@ -1,5 +1,5 @@
 require('dotenv').config();
-const DEVELOPMENT = process.env.NODE_ENV == 'dev';
+const DEVELOPMENT = process.env.NODE_ENV != 'production';
 const helmet = require("helmet");
 const express = require('express');
 const session = require('express-session');
@@ -21,8 +21,6 @@ const PORT = 3000;
 const users = db.get('users');
 const messages = db.get('messages');
 
-
-//TODO: Normal login with login page
 
 const APPNAME = process.env.APPNAME;
 const BaseDomain = "https://" + APPNAME + ".loca.lt";
