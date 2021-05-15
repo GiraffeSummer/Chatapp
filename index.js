@@ -1,6 +1,5 @@
 require('dotenv').config();
 const DEVELOPMENT = process.env.NODE_ENV != 'production';
-const ALLLOGIN = (process.env.LOGINS) ? process.env.LOGINS.toLowerCase() != 'single' : true
 const helmet = require("helmet");
 const express = require('express');
 const session = require('express-session');
@@ -15,7 +14,6 @@ const wrap = middleware => (socket, next) => middleware(socket.request, {}, next
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 
-
 const { db, Chat, RandomColor, OnlineStatus, GetOnlineUsers } = require('./util/Chat');
 const PORT = 3000;
 
@@ -25,6 +23,7 @@ const messages = db.get('messages');
 
 const APPNAME = process.env.APPNAME;
 const BaseDomain = "https://" + APPNAME + ".loca.lt";
+const allowedOrigins = [BaseDomain, "https://google.com", "https://cdn.discordapp.com/"];
 
 function ensureAuthenticated(req, res, next) {
     const Authorized = req.isAuthenticated();
@@ -47,16 +46,21 @@ passport.deserializeUser(function (obj, done) {
     done(null, obj);
 });
 
-passport.use(require("./passport/discordStrategy"));
-if(ALLLOGIN){
-    passport.use(require("./passport/githubStrategy"));
-    passport.use(require("./passport/googleStrategy"));
-}
+module.exports.strategies = require('./util/strategyManager').FromJSON();
 
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
 app.use(express.static("./public"));
-app.use(cors({ credentials: true }));
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true); if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        } return callback(null, true);
+    },
+    credentials: true
+}));
 app.use(helmet());
 app.use(cookieParser(process.env.COOKIEKEY));
 const SessionOpts = session({

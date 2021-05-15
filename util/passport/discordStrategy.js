@@ -1,16 +1,17 @@
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-const { BaseDomain } = require("../index.js");
+const DiscordStrategy = require('passport-discord').Strategy;
+const { BaseDomain } = require("../../index.js");
 
-const { db, CreateUserObj } = require('../util/Chat');
+const { db, CreateUserObj } = require('../Chat');
 
 const users = db.get('users');
 
-const CALLBACK_URL = BaseDomain + `/auth/google/callback`;
+const CALLBACK_URL = BaseDomain + `/auth/discord/callback`;
 
-module.exports = new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT,
-    clientSecret: process.env.GOOGLE_SECRET,
-    callbackURL: CALLBACK_URL
+module.exports = new DiscordStrategy({
+    clientID: process.env.DISCORD_CLIENT,
+    clientSecret: process.env.DISCORD_SECRET,
+    callbackURL: CALLBACK_URL,
+    scope: ['identify', 'email'/*, 'guilds', 'guilds.join'*/]
 },
     async (accessToken, refreshToken, profile, done) => {
         // asynchronous verification, for effect...
@@ -18,8 +19,7 @@ module.exports = new GoogleStrategy({
             let User = await users.findOne({ id: profile.id })
 
             if (!User) {
-                profile.username = profile.displayName;
-                //profile.avatar = profile._json.picture;
+                profile.username = profile.username + "#" + profile.discriminator;
                 User = await users.insert(CreateUserObj(profile))
             } else console.log(User);
 

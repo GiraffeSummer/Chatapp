@@ -1,7 +1,7 @@
 <%- include('head', {data});%>
 
     <body>
-        <a class="button" href='/auth/github'>Sign in With GitHub</a><br>
-        <a class="button" href='/auth/discord'>Sign in With Discord</a><br>
-        <a class="button" href='/auth/google'>Sign in With Google</a>
+        <% if (data.strategies.github) {%> <a class="button" href='/auth/github'>Sign in With GitHub</a><br><%}%>
+        <% if (data.strategies.discord) {%><a class="button" href='/auth/discord'>Sign in With Discord</a><br><%}%>
+        <% if (data.strategies.google) {%><a class="button" href='/auth/google'>Sign in With Google</a><br><%}%>
     </body>
