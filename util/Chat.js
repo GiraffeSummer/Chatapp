@@ -1,5 +1,4 @@
-const monk = require('monk');
-const db = monk(process.env.MONGODB_URI);
+const db = require('monk')(process.env.MONGODB_URI);
 const { Modifier, RandomModifier, Convert: TextConvert } = require('./textConvert');
 
 const users = db.get('users');
