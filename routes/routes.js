@@ -22,6 +22,10 @@ Router.get('/api/chat', ensureAuthenticated, async (req, res) => {
     res.send({ data: { window: { title: APPNAME }, user: req.user, chat: Chat, users } });
 })
 
+Router.get("/api/login", (req, res) => {
+    res.send({ data: { window: { title: APPNAME }, strategies } })
+})
+
 Router.get("/login", (req, res) => {
     res.render("login", { data: { window: { title: APPNAME }, strategies } })
 })
